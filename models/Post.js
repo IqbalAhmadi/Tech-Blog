@@ -12,12 +12,14 @@ Post.init(
       autoIncrement: true,
     },
     title: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(25),
       allowNull: false,
+      unique: true,
     },
-    body: {
+    content: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     user_id: {
       type: DataTypes.INTEGER,
@@ -29,11 +31,11 @@ Post.init(
   },
   {
     sequelize,
+    timestamps: true,
     freezeTableName: true,
     underscored: true,
     modelName: 'post',
   }
 )
 
-// export
 module.exports = Post

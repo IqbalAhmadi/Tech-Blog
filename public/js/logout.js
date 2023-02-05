@@ -1,18 +1,16 @@
-// const { application } = require("express");
-// const { json } = require("sequelize");
+const logout = async (event) => {
+  event.preventDefault();
 
-async function logout() {
-  const response = await fetch('/api/users/logout', {
-    method: 'POST',
-    headers: { 'Content-Type': application / json },
-  })
+  const response = await fetch("/api/users/logout", {
+    method: "post",
+    headers: { "Content-Type": "application/json" },
+  });
 
-  //checking to see if all works
   if (response.ok) {
-    document.location.replace('/')
+    document.location.replace("/");
   } else {
-    alert(response.statusText)
+    alert(response.statusText);
   }
-}
-// adding eventlisteners
-document.querySelector('#logout-btn').addEventListener('click', logout)
+};
+
+document.querySelector("#logout").addEventListener("click", logout);

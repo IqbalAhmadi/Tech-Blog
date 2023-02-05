@@ -1,137 +1,60 @@
 const router = require('express').Router()
-const { User, Post, Comment } = require('../../models')
-const sequelize = require('../config/connection')
+const { Post, User, Comment } = require('../models/')
+const withAuth = require('../utils/auth')
 
-// user section
-router.get('/', (req, res) => {
-  Post.findAll({
-    attributes: ['id', 'title', 'body', 'user_id'],
-    include: [
-      {
-        model: User,
-        as: 'user',
-        attributes: ['username'],
-      },
-      {
-        model: Comment,
-        as: 'comments',
-        attributes: ['id', 'comment_text', 'user_id'],
-      },
-    ],
-  })
-    .then((dbPostData) => {
-      if (!dbPostData) {
-        res.status(404).json({ message: 'No posts availabe' })
-        return
-      }
-      const posts = dbPostData.map((post) => post.get({ plain: true }))
-      console.log(posts)
-      res.render('home', { posts, loggedIn: req.session.loggedIn })
+// get all posts for homepage
+router.get('/', async (req, res) => {
+  try {
+    const postData = await Post.findAll({
+      include: [User],
     })
-    .catch((err) => {
-      console.log(err)
-      res.status(500).json(err)
-    })
+
+    const posts = postData.map((post) => post.get({ plain: true }))
+
+    res.render('homepage', { posts, logged_in: req.session.logged_in })
+  } catch (err) {
+    res.status(500).json(err)
+  }
 })
 
-router.get('/viewpost/:id', (req, res) => {
-  User.findOne({
-    where: {
-      id: req.params.id,
-    },
-    attributes: ['id', 'title', 'body', 'user_id'],
-    include: [
-      {
-        model: User,
-        as: 'user',
-        attributes: ['username'],
+// get single post
+router.get('/post/:id', withAuth, async (req, res) => {
+  try {
+    const postData = await Post.findOne({
+      where: {
+        id: req.params.id,
       },
-      {
-        model: Comment,
-        as: 'comments',
-        attributes: ['id', 'comment_text', 'post_id'],
-        include: [
-          {
+
+      include: [
+        {
+          model: Comment,
+          include: {
             model: User,
-            as: 'user',
             attributes: ['username'],
           },
-        ],
-      },
-    ],
-  })
-    .then((dbPostData) => {
-      if (!dbPostData) {
-        res.status(404).json({ message: 'No post availabe!' })
-        return
-      }
-      const post = dbPostData.get({ plain: true })
+        },
+        {
+          model: User,
+          attributes: ['username'],
+        },
+      ],
+    })
+
+    if (postData) {
+      const post = postData.get({ plain: true })
       console.log(post)
-      const myPost = post.user_id == req.session.user_id
-      res.render('single-post', {
-        post,
-        loggedIn: req.session.loggedIn,
-        currentUser: myPost,
-      })
-    })
-    .catch((err) => {
-      console.log(err)
-      res.status(500).json(err)
-    })
+      res.render('post-by-id', { post, logged_in: req.session.logged_in })
+    } else {
+      res.status(404).end()
+    }
+  } catch (err) {
+    res.status(500).json(err)
+  }
 })
 
+//Route to login or signup page
 router.get('/login', (req, res) => {
-  console.log('Is logged in?', req.session.loggedIn)
-  res.render('login', { loggedIn: req.session.loggedIn })
+  res.render('login')
 })
 
-router.get('/dashboard', (req, res) => {
-  console.log(req.session.user_id, ' this is the session id')
-  Post.findAll({
-    where: {
-      user_id: req.session.user_id,
-    },
-    attributes: ['id', 'title', 'body', 'user_id'],
-    include: [
-      {
-        model: User,
-        as: 'user',
-        attributes: ['username'],
-      },
-      {
-        model: Comment,
-        as: 'comments',
-        attributes: ['id', 'comment_text', 'user_id'],
-        include: [
-          {
-            model: User,
-            as: 'user',
-            attributes: ['username'],
-          },
-        ],
-      },
-    ],
-  })
-    .then((dbPostData) => {
-      //serialize data
-      if (!dbPostData) {
-        res.status(404).json({ message: 'No Posts Available' })
-        return
-      }
-      const posts = dbPostData.map((post) => post.get({ plain: true })) // serialize all the posts
-      console.log(posts)
-      res.render('dashboard', { posts, loggedIn: req.session.loggedIn })
-    })
-    .catch((err) => {
-      console.log(err)
-      res.status(500).json(err)
-    })
-})
-
-router.get('/edit/:id', (req, res) => {
-  res.render('edit-post', {
-    loggedIn: req.session.loggedIn,
-    post_id: req.params.id,
-  })
-})
 module.exports = router

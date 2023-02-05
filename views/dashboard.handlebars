@@ -1,6 +1,25 @@
-<h1 class="padding-20">My Posts</h1>
-<p><a class="link" href="/post">New Post</a></p>
-{{#each posts as |aPost| }}
-{{!-- Pass in the data to each individual post --}}
-{{> post aPost}}
-{{/each}}
+<h2>Your Posts</h2>
+<div class="centerthisbutton">
+<button type="submit" class="btn btn-primary"><a href="/dashboard/new">ADD POST</a></button>
+</div>
+<section>
+    {{#if posts.length}}
+
+    {{#each posts as |post|}}
+    <article class="post">
+        <div class="container-fluid dashboard-container">
+            <div class="card-header dashboard-post">
+                <h4 class="card-title post-title"><a class="link" href="/dashboard/edit/{{id}}">{{title}}</a></h4>
+                <div class="card-body post-body">
+                    <p class="card-body post-content">{{content}}</p>
+                    <p class="card-text post-author">Posted by <span class="post-username">{{user.username}}</span> on
+                        {{format_date post.createdAt}}</p>
+                </div>
+            </div>
+        </div>
+    </article>
+    {{/each}}
+
+
+    {{/if}}
+</section>

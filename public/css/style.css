@@ -1,0 +1,58 @@
+:root {
+  --mono-green: #4c8a9a;
+  --tea-green: #96c0b7;
+  --dark-teal: #335c67;
+  --dark-purple: #28112b;
+  --dark-rose: #4c2f3a;
+}
+
+body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  background-color: var(--tea-green);
+  font-size: 16px;
+}
+
+header {
+  background-color: var(--dark-teal);
+  border-bottom: 1px solid black;
+}
+
+h1 a {
+  color: var(--tea-green);
+  font-size: 50px;
+}
+
+h1,
+h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+nav a {
+  color: var(--tea-green);
+  font-size: 30px;
+  text-decoration: underline;
+  padding: 6px;
+}
+
+.card-header {
+  background-color: #ccc;
+  display: block;
+}
+
+button a {
+  color: white;
+}
+
+.post {
+  margin: 5px;
+}
+
+.col {
+  margin: 5px;
+}
+
+.centerthisbutton {
+  text-align: center;
+}
