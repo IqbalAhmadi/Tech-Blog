@@ -18,6 +18,8 @@ This is a backend tech blog project that allows user to post a blog. Users are a
 
 ## Link to deployed website
 
+[Deployed Link on Heroku](https://tech-blog-backend.herokuapp.com/)
+
 ## By
 
 Iqbal Ahmmadi
